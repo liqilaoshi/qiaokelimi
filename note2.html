@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK 4 Lesson 4 - Pages 5 to 11 Interactive Exercises</title>
+    <!-- Canvas Confetti for victory effect -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #f58e58;
+            --primary-dark: #d9733e;
+            --primary-light: #fdeee6;
+            --bg-color: #fcf8f5;
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-muted: #666666;
+            --correct-color: #2ecc71;
+            --wrong-color: #e74c3c;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 960px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        /* Top Header */
+        .top-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .top-header-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-header h1 {
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pill-tag {
+            background: rgba(255, 255, 255, 0.25);
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Navigation Bar */
+        .nav-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .nav-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .nav-tabs::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 4px;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 7px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary-dark);
+        }
+
+        /* Page Content & Animation */
+        .page-content {
+            display: none;
+            padding: 28px;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Lesson Banner */
+        .lesson-banner {
+            background-color: var(--primary-light);
+            border-left: 5px solid var(--primary-color);
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 22px;
+        }
+
+        .lesson-banner h2 {
+            color: var(--primary-dark);
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .lesson-banner p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Hover Tooltip Word Class */
+        .hover-char {
+            position: relative;
+            cursor: pointer;
+            border-bottom: 1.5px dotted var(--primary-dark);
+            padding: 0 1px;
+            display: inline-block;
+        }
+
+        .hover-char:hover {
+            background-color: #ffe0d1;
+            border-radius: 3px;
+        }
+
+        .char-tooltip {
+            visibility: hidden;
+            opacity: 0;
+            background-color: #333333;
+            color: #ffffff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px 10px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: opacity 0.2s, visibility 0.2s;
+            font-size: 13px;
+            font-weight: normal;
+            line-height: 1.3;
+        }
+
+        .char-tooltip::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333333 transparent transparent transparent;
+        }
+
+        .hover-char:hover .char-tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Page 5 QA Layout */
+        .qa-card {
+            background: #fff;
+            border: 1px solid #f0d5c9;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .qa-title {
+            font-size: 17px;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .qa-input-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .qa-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .qa-input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Pages 6-8 Word Intro Style */
+        .word-intro-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .word-intro-grid { grid-template-columns: 1fr; }
+        }
+
+        .word-char-card {
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .word-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .word-details {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #eee;
+        }
+
+        .word-phrase {
+            color: var(--primary-dark);
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .example-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .example-item {
+            font-size: 17px;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-color);
+            padding: 10px 14px;
+            border-radius: 8px;
+        }
+
+        /* Pages 9-11 Look & Fill Blank Style */
+        .look-speak-card {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 25px;
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid #eed8cd;
+        }
+
+        @media (max-width: 768px) {
+            .look-speak-card { grid-template-columns: 1fr; }
+        }
+
+        .look-img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .word-bank {
+            background: var(--primary-light);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .bank-tag {
+            background: white;
+            color: var(--primary-dark);
+            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+            border: 1px solid var(--primary-color);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+
+        .bank-tag:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .dialogue-fill-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .fill-input {
+            border: none;
+            border-bottom: 2px solid var(--primary-color);
+            padding: 2px 8px;
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--primary-dark);
+            outline: none;
+            width: 140px;
+            text-align: center;
+            background: #fff8f5;
+            transition: all 0.2s;
+        }
+
+        .fill-input.correct {
+            border-bottom-color: var(--correct-color);
+            background: #e8f8f0;
+            color: #1e8449;
+        }
+
+        .fill-input.wrong {
+            border-bottom-color: var(--wrong-color);
+            background: #fdf2e9;
+            color: #c0392b;
+        }
+
+        /* Buttons & Speech Control */
+        .btn {
+            padding: 8px 18px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        .btn-mic {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-mic.recording {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        .action-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .speak-btn-sm {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--primary-dark);
+            transition: transform 0.2s;
+        }
+
+        .speak-btn-sm:hover {
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Header Navigation -->
+        <div class="top-header">
+            <div class="top-header-title">
+                <h1><span class="pill-tag">Text 4</span> 课文4 综合拓展与练习</h1>
+            </div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab(5)">5. 课文练习</button>
+                <button class="tab-btn" onclick="switchTab(6)">6. 生词:纸</button>
+                <button class="tab-btn" onclick="switchTab(7)">7. 生词:搬</button>
+                <button class="tab-btn" onclick="switchTab(8)">8. 生词:需要</button>
+                <button class="tab-btn" onclick="switchTab(9)">9. 看图说话(一)</button>
+                <button class="tab-btn" onclick="switchTab(10)">10. 看图说话(二)</button>
+                <button class="tab-btn" onclick="switchTab(11)">11. 看图说话(三)</button>
+            </div>
+        </div>
+
+        <!-- PAGE 5: Text Exercises (QA & Role Play) -->
+        <div id="page5" class="page-content active">
+            <div class="lesson-banner">
+                <h2>Text Exercises 课文练习</h2>
+                <p>❯ 分角色朗读对话，读后回答问题。 Role-play the dialogue and then answer the questions.</p>
+                <p style="margin-top: 6px; color: var(--primary-dark); font-weight: bold;">💡 鼠标移动到汉字上可查看拼音英译，点击🎤按钮可进行语音回答！</p>
+            </div>
+
+            <!-- Q1 -->
+            <div class="qa-card">
+                <div class="qa-title">
+                    (1) <span class="hover-char">刘<span class="char-tooltip">Liú<br>Liu</span></span><span class="hover-char">明<span class="char-tooltip">míng<br>Ming</span></span><span class="hover-char">明<span class="char-tooltip">míng<br>tomorrow</span></span><span class="hover-char">天<span class="char-tooltip">tiān<br>day</span></span><span class="hover-char">去<span class="char-tooltip">qù<br>go</span></span><span class="hover-char">买<span class="char-tooltip">mǎi<br>buy</span></span><span class="hover-char">什<span class="char-tooltip">shén<br>what</span></span><span class="hover-char">么<span class="char-tooltip">me<br>what</span></span>？
+                </div>
+                <div class="qa-input-box">
+                    <input type="text" id="ans1" class="qa-input" placeholder="输入或语音回答（例如：买纸箱）...">
+                    <button class="btn btn-mic" onclick="listenToAnswer(1)">🎤 语音回答</button>
+                    <button class="btn btn-outline" onclick="speakText('刘明明天去买纸箱。')">🔊 参考答案</button>
+                </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="qa-card">
+                <div class="qa-title">
+                    (2) <span class="hover-char">王<span class="char-tooltip">Wáng<br>Wang</span></span><span class="hover-char">一<span class="char-tooltip">yī<br>Yi</span></span><span class="hover-char">雪<span class="char-tooltip">xuě<br>Xue</span></span><span class="hover-char">打<span class="char-tooltip">dǎ<br>plan</span></span><span class="hover-char">算<span class="char-tooltip">suàn<br>plan</span></span>（dǎsuàn, plan）<span class="hover-char">下<span class="char-tooltip">xià<br>next</span></span><span class="hover-char">周<span class="char-tooltip">zhōu<br>week</span></span><span class="hover-char">做<span class="char-tooltip">zuò<br>do</span></span><span class="hover-char">什<span class="char-tooltip">shén<br>what</span></span><span class="hover-char">么<span class="char-tooltip">me<br>what</span></span>？
+                </div>
+                <div class="qa-input-box">
+                    <input type="text" id="ans2" class="qa-input" placeholder="输入或语音回答（例如：打扫新家）...">
+                    <button class="btn btn-mic" onclick="listenToAnswer(2)">🎤 语音回答</button>
+                    <button class="btn btn-outline" onclick="speakText('王一雪打算下周去打扫新家。')">🔊 参考答案</button>
+                </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="qa-card">
+                <div class="qa-title">
+                    (3) <span class="hover-char">刘<span class="char-tooltip">Liú<br>Liu</span></span><span class="hover-char">明<span class="char-tooltip">míng<br>Ming</span></span><span class="hover-char">打<span class="char-tooltip">dǎ<br>plan</span></span><span class="hover-char">算<span class="char-tooltip">suàn<br>plan</span></span><span class="hover-char">找<span class="char-tooltip">zhǎo<br>look for</span></span><span class="hover-char">谁<span class="char-tooltip">shéi<br>who</span></span><span class="hover-char">搬<span class="char-tooltip">bān<br>move</span></span><span class="hover-char">家<span class="char-tooltip">jiā<br>home</span></span>？<span class="hover-char">王<span class="char-tooltip">Wáng<br>Wang</span></span><span class="hover-char">一<span class="char-tooltip">yī<br>Yi</span></span><span class="hover-char">雪<span class="char-tooltip">xuě<br>Xue</span></span><span class="hover-char">呢<span class="char-tooltip">ne<br>how about</span></span>？
+                </div>
+                <div class="qa-input-box">
+                    <input type="text" id="ans3" class="qa-input" placeholder="输入或语音回答（例如：找朋友 / 找搬家公司）...">
+                    <button class="btn btn-mic" onclick="listenToAnswer(3)">🎤 语音回答</button>
+                    <button class="btn btn-outline" onclick="speakText('刘明打算请朋友帮忙，王一雪想找搬家公司。')">🔊 参考答案</button>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <div></div>
+                <button class="btn btn-primary" onclick="switchTab(6)">下一页：生词【纸】 ➔</button>
+            </div>
+        </div>
+
+        <!-- PAGE 6: Vocabulary Intro - 纸 -->
+        <div id="page6" class="page-content">
+            <div class="lesson-banner">
+                <h2>New Words 生词学习 (1/3)</h2>
+            </div>
+
+            <div class="word-intro-grid">
+                <div class="word-char-card">
+                    <img src="https://iili.io/nUHxDtS.md.png" alt="纸 田字格" class="word-img" style="height:auto;">
+                </div>
+                <div class="word-details">
+                    <div class="word-phrase">
+                        <span>常用搭配：一张纸，白纸</span>
+                        <button class="speak-btn-sm" onclick="speakText('一张纸，白纸')">🔊</button>
+                    </div>
+                    <ul class="example-list">
+                        <li class="example-item">
+                            <span>弟弟在纸上画了一只小猫。</span>
+                            <button class="speak-btn-sm" onclick="speakText('弟弟在纸上画了一只小猫。')">🔊</button>
+                        </li>
+                        <li class="example-item">
+                            <span>桌上有三张白纸。</span>
+                            <button class="speak-btn-sm" onclick="speakText('桌上有三张白纸。')">🔊</button>
+                        </li>
+                    </ul>
+                    <div style="text-align:center; margin-top:20px;">
+                        <button class="btn btn-mic" id="micWord6" onclick="testReadWord('弟弟在纸上画了一只小猫。', 'micWord6', 'feed6')">🎤 朗读例句测验</button>
+                        <div id="feed6" style="margin-top:10px; font-weight:bold; min-height:20px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button class="btn btn-outline" onclick="switchTab(5)">⬅ 上一页</button>
+                <button class="btn btn-primary" onclick="switchTab(7)">下一页：生词【搬】 ➔</button>
+            </div>
+        </div>
+
+        <!-- PAGE 7: Vocabulary Intro - 搬 -->
+        <div id="page7" class="page-content">
+            <div class="lesson-banner">
+                <h2>New Words 生词学习 (2/3)</h2>
+            </div>
+
+            <div class="word-intro-grid">
+                <div class="word-char-card">
+                    <img src="https://iili.io/nUHIHXI.md.png" alt="搬 田字格" class="word-img" style="height:auto;">
+                </div>
+                <div class="word-details">
+                    <div class="word-phrase">
+                        <span>常用搭配：搬东西</span>
+                        <button class="speak-btn-sm" onclick="speakText('搬东西')">🔊</button>
+                    </div>
+                    <ul class="example-list">
+                        <li class="example-item">
+                            <span>这个纸箱太大了，我帮你搬。</span>
+                            <button class="speak-btn-sm" onclick="speakText('这个纸箱太大了，我帮你搬。')">🔊</button>
+                        </li>
+                        <li class="example-item">
+                            <span>这张桌子要搬去哪儿？</span>
+                            <button class="speak-btn-sm" onclick="speakText('这张桌子要搬去哪儿？')">🔊</button>
+                        </li>
+                    </ul>
+                    <div style="text-align:center; margin-top:20px;">
+                        <button class="btn btn-mic" id="micWord7" onclick="testReadWord('这个纸箱太大了，我帮你搬。', 'micWord7', 'feed7')">🎤 朗读例句测验</button>
+                        <div id="feed7" style="margin-top:10px; font-weight:bold; min-height:20px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button class="btn btn-outline" onclick="switchTab(6)">⬅ 上一页</button>
+                <button class="btn btn-primary" onclick="switchTab(8)">下一页：生词【需要】 ➔</button>
+            </div>
+        </div>
+
+        <!-- PAGE 8: Vocabulary Intro - 需要 -->
+        <div id="page8" class="page-content">
+            <div class="lesson-banner">
+                <h2>New Words 生词学习 (3/3)</h2>
+            </div>
+
+            <div class="word-intro-grid">
+                <div class="word-char-card">
+                    <img src="https://iili.io/nUHIOIp.md.png" alt="需要 田字格" class="word-img" style="height:auto;">
+                </div>
+                <div class="word-details">
+                    <div class="word-phrase">
+                        <span>常用搭配：别的需要</span>
+                        <button class="speak-btn-sm" onclick="speakText('别的需要')">🔊</button>
+                    </div>
+                    <ul class="example-list">
+                        <li class="example-item">
+                            <span>您还有别的需要吗？</span>
+                            <button class="speak-btn-sm" onclick="speakText('您还有别的需要吗？')">🔊</button>
+                        </li>
+                        <li class="example-item">
+                            <span>房间很干净，不需要打扫了。</span>
+                            <button class="speak-btn-sm" onclick="speakText('房间很干净，不需要打扫了。')">🔊</button>
+                        </li>
+                    </ul>
+                    <div style="text-align:center; margin-top:20px;">
+                        <button class="btn btn-mic" id="micWord8" onclick="testReadWord('房间很干净，不需要打扫了。', 'micWord8', 'feed8')">🎤 朗读例句测验</button>
+                        <div id="feed8" style="margin-top:10px; font-weight:bold; min-height:20px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button class="btn btn-outline" onclick="switchTab(7)">⬅ 上一页</button>
+                <button class="btn btn-primary" onclick="switchTab(9)">下一页：看图说话(一) ➔</button>
+            </div>
+        </div>
+
+        <!-- PAGE 9: Look & Speak Exercise (1) -->
+        <div id="page9" class="page-content">
+            <div class="lesson-banner">
+                <h2>看图说话 综合练习 (一)</h2>
+                <p>请根据图片，从备选词库中选择最合适的词语填空。</p>
+            </div>
+
+            <div class="look-speak-card">
+                <div>
+                    <img src="https://i.ibb.co.com/VWj59pwG/image.png" alt="练习一插图" class="look-img">
+                </div>
+                <div>
+                    <div class="word-bank">
+                        <span style="font-weight:bold; font-size:14px; margin-right:5px;">备选词库：</span>
+                        <span class="bank-tag" onclick="fillField('p9_1', '小区')">小区</span>
+                        <span class="bank-tag" onclick="fillField('p9_2', '附近')">附近</span>
+                        <span class="bank-tag" onclick="fillField('p9_3', '太好了')">太好了</span>
+                        <span class="bank-tag" onclick="fillField('p9_4', '咱们')">咱们</span>
+                    </div>
+
+                    <div class="dialogue-fill-box">
+                        <div>A: 这个 <input type="text" id="p9_1" class="fill-input" placeholder="填空1"> 很新，买东西方便吗？</div>
+                        <div>B: <input type="text" id="p9_2" class="fill-input" placeholder="填空2"> 就有一个大超市。</div>
+                        <div>A: 那真的 <input type="text" id="p9_3" class="fill-input" placeholder="填空3">。我也喜欢这里的环境，每家都有一个小花园。</div>
+                        <div>B: 是。后面的房子有两层，<input type="text" id="p9_4" class="fill-input" placeholder="填空4"> 再上去看看。</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button class="btn btn-outline" onclick="switchTab(8)">⬅ 上一页</button>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-primary" onclick="checkFillAnswers(9, {p9_1:'小区', p9_2:'附近', p9_3:'太好了', p9_4:'咱们'})">检查答案</button>
+                    <button class="btn btn-primary" onclick="switchTab(10)">看图说话(二) ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 10: Look & Speak Exercise (2) -->
+        <div id="page10" class="page-content">
+            <div class="lesson-banner">
+                <h2>看图说话 综合练习 (二)</h2>
+                <p>请根据图片，从备选词库中选择最合适的词语填空。</p>
+            </div>
+
+            <div class="look-speak-card">
+                <div>
+                    <img src="https://i.ibb.co.com/whMFWCBM/image.png" alt="练习二插图" class="look-img">
+                </div>
+                <div>
+                    <div class="word-bank">
+                        <span style="font-weight:bold; font-size:14px; margin-right:5px;">备选词库：</span>
+                        <span class="bank-tag" onclick="fillField('p10_1', '怎么办银行卡')">怎么办银行卡</span>
+                        <span class="bank-tag" onclick="fillField('p10_2', '就去办')">就去办</span>
+                        <span class="bank-tag" onclick="fillField('p10_3', '服务很好')">服务很好</span>
+                    </div>
+
+                    <div class="dialogue-fill-box">
+                        <div>A: 你知道 <input type="text" id="p10_1" class="fill-input" style="width:160px;" placeholder="填空1"> ？</div>
+                        <div>B: 用护照就能办，你想在哪家银行办？</div>
+                        <div>A: 北京银行不错，今天下午我 <input type="text" id="p10_2" class="fill-input" placeholder="填空2">。</div>
+                        <div>B: 我也听说 <input type="text" id="p10_3" class="fill-input" style="width:160px;" placeholder="填空3">，咱们一起去吧。</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button class="btn btn-outline" onclick="switchTab(9)">⬅ 上一页</button>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-primary" onclick="checkFillAnswers(10, {p10_1:'怎么办银行卡', p10_2:'就去办', p10_3:'服务很好'})">检查答案</button>
+                    <button class="btn btn-primary" onclick="switchTab(11)">看图说话(三) ➔</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 11: Look & Speak Exercise (3) -->
+        <div id="page11" class="page-content">
+            <div class="lesson-banner">
+                <h2>看图说话 综合练习 (三)</h2>
+                <p>请根据图片，从备选词库中选择最合适的词语填空。</p>
+            </div>
+
+            <div class="look-speak-card">
+                <div>
+                    <img src="https://i.ibb.co.com/qFRBmHFs/image.png" alt="练习三插图" class="look-img">
+                </div>
+                <div>
+                    <div class="word-bank">
+                        <span style="font-weight:bold; font-size:14px; margin-right:5px;">备选词库：</span>
+                        <span class="bank-tag" onclick="fillField('p11_1', '搬完家了')">搬完家了</span>
+                        <span class="bank-tag" onclick="fillField('p11_2', '一直在打扫')">一直在打扫</span>
+                        <span class="bank-tag" onclick="fillField('p11_3', '下个月')">下个月</span>
+                        <span class="bank-tag" onclick="fillField('p11_4', '搬完家了')">搬完家了</span>
+                    </div>
+
+                    <div class="dialogue-fill-box">
+                        <div>A: 你们已经 <input type="text" id="p11_1" class="fill-input" placeholder="填空1"> ？</div>
+                        <div>B: 还没有，我们 <input type="text" id="p11_2" class="fill-input" style="width:150px;" placeholder="填空2">，也买了很多东西，每天都非常累。</div>
+                        <div>A: 我们什么时候去你的新家看看？</div>
+                        <div>B: 好啊，<input type="text" id="p11_3" class="fill-input" placeholder="填空3"> 就 <input type="text" id="p11_4" class="fill-input" placeholder="填空4">，到时候来我家吃饭吧。</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer">
+                <button class="btn btn-outline" onclick="switchTab(10)">⬅ 上一页</button>
+                <button class="btn btn-primary" onclick="checkFillAnswers(11, {p11_1:'搬完家了', p11_2:'一直在打扫', p11_3:'下个月', p11_4:'搬完家了'})">提交全课练习</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Navigation Switcher
+        function switchTab(pageNum) {
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(`page${pageNum}`).classList.add('active');
+            const btns = document.querySelectorAll('.tab-btn');
+            if (btns[pageNum - 5]) {
+                btns[pageNum - 5].classList.add('active');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Text-to-Speech Helper
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'zh-CN';
+                u.rate = 0.85;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        // Speech Recognition for Page 5 Q&A
+        function listenToAnswer(qNum) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("浏览器暂不支持语音识别，请使用 Google Chrome 或 Edge。");
+                return;
+            }
+
+            const rec = new SpeechRecognition();
+            rec.lang = 'zh-CN';
+            const inputField = document.getElementById(`ans${qNum}`);
+
+            rec.onstart = () => {
+                inputField.placeholder = "正在聆听，请说话...";
+            };
+
+            rec.onresult = (e) => {
+                const text = e.results[0][0].transcript;
+                inputField.value = text;
+                inputField.style.borderColor = "var(--correct-color)";
+            };
+
+            rec.start();
+        }
+
+        // Read Test for Word Intro Pages 6-8
+        function testReadWord(targetSentence, btnId, feedId) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("浏览器暂不支持语音识别。");
+                return;
+            }
+
+            const rec = new SpeechRecognition();
+            rec.lang = 'zh-CN';
+            const btn = document.getElementById(btnId);
+            const feed = document.getElementById(feedId);
+
+            rec.onstart = () => {
+                btn.classList.add('recording');
+                btn.innerText = '🛑 正在录音...';
+                feed.innerText = '请清晰朗读上述句子...';
+                feed.style.color = '#e67e22';
+            };
+
+            rec.onresult = (e) => {
+                const text = e.results[0][0].transcript;
+                if (text.includes(targetSentence.slice(0, 3)) || targetSentence.includes(text)) {
+                    feed.innerText = `🎉 读得非常标准！识别：“${text}”`;
+                    feed.style.color = "var(--correct-color)";
+                    if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60 });
+                } else {
+                    feed.innerText = `❌ 识别：“${text}”，再试一次吧！`;
+                    feed.style.color = "var(--wrong-color)";
+                }
+            };
+
+            rec.onend = () => {
+                btn.classList.remove('recording');
+                btn.innerText = '🎤 朗读例句测验';
+            };
+
+            rec.start();
+        }
+
+        // Fill Blank Helper
+        function fillField(fieldId, value) {
+            const input = document.getElementById(fieldId);
+            if (input) {
+                input.value = value;
+            }
+        }
+
+        // Check Fill Blank Answers for Pages 9-11
+        function checkFillAnswers(pageNum, solutionMap) {
+            let correctCount = 0;
+            const keys = Object.keys(solutionMap);
+
+            keys.forEach(key => {
+                const input = document.getElementById(key);
+                const userVal = input.value.trim();
+                const expected = solutionMap[key];
+
+                input.classList.remove('correct', 'wrong');
+
+                if (userVal === expected || userVal.includes(expected)) {
+                    input.classList.add('correct');
+                    correctCount++;
+                } else {
+                    input.classList.add('wrong');
+                }
+            });
+
+            if (correctCount === keys.length) {
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+                }
+                alert("太棒了！全部填空回答正确！");
+            } else {
+                alert(`已为您批改：答对 ${correctCount} / ${keys.length} 个。请参考标红处重新尝试！`);
+            }
+        }
+    </script>
+</body>
+</html>
